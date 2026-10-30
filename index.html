@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BUSÃO 616 - v23 OFICIAL LIMPA</title>
+<style>
+:root{--green:#0a7e07;--dark:#0f2a14;--gold:#ffd700;--whats:#25d366}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto}
+body{background:linear-gradient(rgba(15,42,20,.92),rgba(5,20,10,.95)),url('fundo-onibus.jpg') center/cover fixed;min-height:100vh;color:#1a1a1a;padding-bottom:80px}
+.top{background:linear-gradient(90deg,#0a7e07,#1a4d2e);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50}
+.tabs{display:flex;background:rgba(255,255,255,.98);position:sticky;top:52px;z-index:40;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.tab{flex:1;min-width:60px;padding:11px 3px;text-align:center;font-weight:800;font-size:9px;cursor:pointer;border-bottom:3px solid transparent;color:#666;white-space:nowrap}
+.tab.active{border-bottom-color:var(--green);color:var(--green);background:#e8f5e9}
+.page{display:none} .page.active{display:block}
+.card{background:rgba(255,255,255,.98);margin:10px;border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:14px}
+.btn{width:100%;padding:12px;border-radius:12px;border:none;font-weight:900;font-size:13px;cursor:pointer;margin-top:8px}
+.btn-green{background:linear-gradient(180deg,#1a4d2e,#0f2a14);color:#fff}
+.btn-gray{background:#f1f1f1;color:#333;border:1px solid #ddd}
+.btn-gold{background:linear-gradient(180deg,#ffe066,#d4a017);color:#111;border:1px solid #c9a227}
+.btn-whats{background:var(--whats);color:white}
+.input{width:100%;padding:12px;border-radius:10px;border:1.5px solid #ddd;margin:5px 0;font-size:13px}
+.small-label{font-size:10px;font-weight:800;color:#0a7e07;letter-spacing:.5px;margin-top:8px;display:block}
+.vitrine-phone{display:flex;flex-direction:column;gap:12px}
+.vitrine-card{display:flex;gap:12px;background:white;border:1px solid #e8e8e8;border-radius:16px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,.06);align-items:center}
+.vitrine-img{width:68px;height:68px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;border:1px solid #d0e8d0}
+.qty-box{display:flex;align-items:center;gap:8px;background:#f8f8f8;border-radius:12px;padding:4px 8px;border:1px solid #e0e0e0}
+.qty-btn{width:30px;height:30px;border-radius:9px;border:none;background:#0a7e07;color:white;font-weight:900;font-size:18px;cursor:pointer}
+.qty-num{font-weight:900;min-width:22px;text-align:center}
+.fura-board{background:linear-gradient(180deg,#3d2500,#2e1a00);padding:10px;border-radius:18px;border:4px solid #1a0f00}
+.fura-title{background:linear-gradient(#ffd700,#c9a227);color:#0a2e6b;text-align:center;padding:10px;font-weight:900;font-size:20px;border:2px solid #000;border-radius:8px 8px 0 0}
+.fura-sub{background:#0a2e6b;color:#ffd700;text-align:center;padding:6px;font-weight:800;font-size:9px;border-radius:0 0 8px 8px}
+.fura-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-top:10px;background:linear-gradient(145deg,#ffe066,#c9a227);padding:10px;border-radius:12px}
+.furo{aspect-ratio:1;background:radial-gradient(circle at 30% 30%,#ffec8b,#d4a017 65%,#8c6a00);border-radius:50%;border:2px solid #5a3a00;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900}
+.furo.furado{background:#fff;border-style:dashed;color:#555}
+.timer{background:#ff3d00;color:white;padding:6px 12px;border-radius:20px;font-weight:800;font-size:11px;display:inline-flex}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:100;align-items:center;justify-content:center;padding:12px}
+.modal.active{display:flex}
+.win-box{background:white;border:3px solid #ffd700;border-radius:22px;padding:18px;width:100%;max-width:400px}
+.online-dot{width:9px;height:9px;background:#00ff6a;border-radius:50%;display:inline-block;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.empty{padding:16px;text-align:center;color:#888;font-size:12px;background:#fafafa;border-radius:12px;border:1px dashed #ddd}
+.chat-container{background:#e5ddd5;padding:8px;border-radius:12px;min-height:200px;max-height:420px;overflow-y:auto}
+.chat-msg{display:flex;gap:8px;margin:8px 0;align-items:flex-end}
+.chat-avatar{width:34px;height:34px;border-radius:50%;background:#0a7e07;color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0}
+.chat-bubble{background:white;padding:8px 10px;border-radius:12px 12px 12px 0;max-width:78%;box-shadow:0 1px 2px rgba(0,0,0,.15);font-size:13px;line-height:1.3}
+.chat-bubble.system{background:#fff3cd;border:1px solid #ffe69c;text-align:center;margin:0 auto;border-radius:12px;font-size:11px;font-weight:700;color:#664d00}
+.chat-time{font-size:9px;color:#999;margin-top:2px;text-align:right}
+.emoji-panel{display:none;grid-template-columns:repeat(8,1fr);gap:4px;background:white;padding:8px;border-radius:12px;border:1px solid #ddd;max-height:160px;overflow-y:auto;margin-top:8px}
+.emoji-panel.active{display:grid}
+.rateio-box{background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:2px solid #0a7e07;border-radius:14px;padding:12px;margin:8px 0}
+.banner-item{background:linear-gradient(90deg,#fff9c4,#ffecb3);border:2px solid #d4a017;border-radius:12px;padding:10px;margin:8px 0}
+.pix-box{background:#f0fff4;border:2px dashed #25d366;border-radius:12px;padding:10px;margin:8px 0}
+</style>
+</head>
+<body>
+<div class="top">
+<div><b>🚌 PAREBUSS CHAT BOX</b><br><small style="font-weight:400">v23 Oficial • <span id="clock">--:--:--</span></small></div>
+<div style="text-align:right;font-size:11px"><span class="online-dot"></span> <span id="onlineCount">1</span> online<br><small id="userLogado">Visitante</small></div>
+</div>
+<div class="tabs">
+<div class="tab active" onclick="showPage('usuario',this)">👤 Usuário</div>
+<div class="tab" onclick="showPage('fura',this)">🎯 Fura Fura</div>
+<div class="tab" onclick="showPage('chat',this)">💬 Chat</div>
+<div class="tab" onclick="showPage('cliente',this)">🧁 Vitrine</div>
+<div class="tab" onclick="showPage('fornecedor',this)">🏪 Fornecedor</div>
+<div class="tab" onclick="showPage('motorista',this)">🚕 Motorista</div>
+<div class="tab" onclick="showPage('parceiros',this)">🔥 Gás</div>
+<div class="tab" onclick="showPage('admin',this)">🔒 Admin</div>
+</div>
+
+<div id="usuario" class="page active">
+<div class="card">
+<b>👤 Cadastro</b>
+<input id="uNome" class="input" placeholder="Nome completo">
+<input id="uTelefone" class="input" placeholder="WhatsApp com DDD">
+<input id="uQd" class="input" placeholder="Quadra ex: Qd12 Arapoanga">
+<button class="btn btn-green" onclick="cadastrarUsuario()">Cadastrar</button>
+<div id="usuarioInfo" style="margin-top:10px"></div>
+<div style="margin-top:12px;border-top:1px dashed #ccc;padding-top:10px">
+<b>🔗 Seu link de convite</b>
+<div style="display:flex;gap:6px;margin-top:6px"><input id="linkConvite" class="input" readonly style="flex:1;margin:0"><button class="btn btn-gold" style="width:auto;margin:0" onclick="gerarConvite()">Gerar</button></div>
+<button class="btn btn-gray" onclick="copiarConvite()">📋 Copiar link</button>
+</div>
+</div>
+</div>
+
+<div id="fura" class="page">
+<div class="card" style="background:rgba(18,18,18,.96);border:2px solid #5c4a0f">
+<div style="text-align:center"><div class="timer">⏱️ <span id="countTimerFura">--:--:--</span> • Tabuleiro do dia</div></div>
+<div class="fura-board" style="margin-top:10px">
+<div class="fura-title">FURA FURA</div>
+<div class="fura-sub">100 FUROS - QUEM FURA FICA MARCADO - ZERA MEIA-NOITE</div>
+<div class="fura-grid" id="furaGrid"></div>
+</div>
+<div style="text-align:center;margin-top:10px"><b id="statusFura" style="color:#ffd700;font-size:12px">Carregando...</b></div>
+</div>
+<div class="card"><b>🏆 Quem furou hoje</b><div id="ganhadoresFura" class="empty">Nenhum furo hoje ainda.</div></div>
+</div>
+
+<div id="chat" class="page">
+<div class="card">
+<div style="display:flex;justify-content:space-between"><b>💬 Sala do Busão</b><small style="background:#e8f5e9;padding:4px 8px;border-radius:20px;font-weight:700;color:#0a7e07" id="chatOnline">1 online</small></div>
+<div id="chatMensagens" class="chat-container" style="margin:10px 0"></div>
+<div style="display:flex;gap:6px;align-items:center"><button class="btn btn-gray" style="width:auto;margin:0;padding:8px 10px" onclick="abrirClip()">📎</button><input id="chatInput" class="input" placeholder="Digite uma mensagem..." style="flex:1;margin:0" onkeypress="if(event.key==='Enter')enviarChat()"><button class="btn btn-gray" style="width:auto;margin:0" onclick="toggleEmoji()">😀</button></div>
+<input type="file" id="inputClip" accept="image/*,video/*,application/pdf,.doc,.docx" style="display:none" onchange="enviarArquivo(this)">
+<div id="menuClip" style="display:none;position:absolute;bottom:90px;left:20px;background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.2);padding:6px;z-index:90;border:1px solid #ddd">
+<div onclick="escolherTipo('doc')" style="padding:10px 14px;cursor:pointer;display:flex;gap:8px;align-items:center;font-size:13px;font-weight:700"><span style="color:#5f66cd">📄</span> Documento</div>
+<div onclick="escolherTipo('midia')" style="padding:10px 14px;cursor:pointer;display:flex;gap:8px;align-items:center;font-size:13px;font-weight:700"><span style="color:#007bfc">🖼️</span> Fotos e vídeos</div>
+<div onclick="escolherTipo('camera')" style="padding:10px 14px;cursor:pointer;display:flex;gap:8px;align-items:center;font-size:13px;font-weight:700"><span style="color:#e91e63">📷</span> Câmera</div>
+</div>
+<div id="emojiPanel" class="emoji-panel"></div>
+<button class="btn btn-whats" onclick="enviarChat()">Enviar 💬</button>
+</div>
+</div>
+
+<div id="cliente" class="page">
+<div class="card">
+<b>🧁 Vitrine</b><br><small style="color:#666">Escolha a quantidade</small>
+<div id="listaCliente" class="vitrine-phone" style="margin-top:12px"></div>
+<div style="background:rgba(255,255,255,.98);padding:12px;border-top:2px solid #0a7e07;border-radius:12px;margin-top:12px;position:sticky;bottom:0">
+<div style="display:flex;justify-content:space-between;font-weight:900;font-size:18px"><span>Total (<span id="qtdItens">0</span>)</span><span id="totalClienteView">R$ 0,00</span></div>
+<select id="formaPag" class="input"><option>PIX</option><option>Dinheiro na entrega</option><option>Cartão na entrega</option></select>
+<button class="btn btn-green" onclick="finalizarPedido()">Confirmar Pedido</button>
+<button class="btn btn-gray" onclick="cancelarPedido()">Limpar carrinho</button>
+<div id="historicoPedidos" style="margin-top:8px"></div>
+</div>
+</div>
+</div>
+<div id="fornecedor" class="page">
+<div class="card">
+<b>🏪 Fornecedor - Prêmio Fura Fura</b>
+<input id="vNome" class="input" placeholder="Seu nome">
+<input id="vLoja" class="input" placeholder="Nome da loja / banca">
+<input id="vLocal" class="input" placeholder="Local ex: Qd12 Arapoanga">
+<select id="tipoPremio" class="input"><option>Café da Manhã Completo</option><option>PIX</option><option>Cashback</option><option>Desconto</option><option>Brinde</option><option>Lanche</option></select>
+<input id="nomePremio" class="input" placeholder="O que vai entregar? ex: 1 café + pão com ovo">
+<input id="comoResgatar" class="input" placeholder="Como resgatar? ex: Mostrar código FURA-1234">
+<input id="valorPremio" type="number" class="input" placeholder="Valor do prêmio R$">
+<div style="border-top:1px dashed #ccc;margin-top:10px;padding-top:10px">
+<span class="small-label">💰 Comissão e divulgação</span>
+<select id="comissaoFornTipo" class="input"><option value="nenhuma">Só patrocina mimo</option><option value="porcentagem">Porcentagem sobre venda</option><option value="fixo">Valor fixo por semana</option></select>
+<input id="comissaoFornValor" type="number" class="input" placeholder="Valor da comissão">
+<label style="font-size:12px;display:flex;gap:6px;align-items:center;margin-top:6px"><input type="checkbox" id="querBannerForn"> Banner no topo (R$ <input id="taxaBannerForn" type="number" value="20" style="width:60px;padding:4px;border-radius:6px;border:1px solid #ccc"> /semana)</label>
+</div>
+<button class="btn btn-green" onclick="salvarVendedor()">Salvar Prêmio</button>
+<div style="margin-top:14px;border-top:1.5px solid #e0e0e0;padding-top:10px"><b>📦 Produto da vitrine</b>
+<div style="display:flex;gap:6px;margin-top:6px"><input id="nomeItem" class="input" placeholder="Nome produto" style="flex:2;margin:0"><input id="valorItem" type="number" step="0.01" class="input" placeholder="R$" style="flex:1;margin:0"></div>
+<button class="btn btn-green" onclick="addItem()">Adicionar na vitrine</button>
+<div id="listaItens" style="margin-top:8px"></div>
+</div>
+<div id="listaPremios" style="margin-top:10px"></div>
+</div>
+</div>
+
+<div id="motorista" class="page">
+<div class="card">
+<b>🚕 Área do Motorista</b>
+<div style="background:#f0f8ff;padding:10px;border-radius:10px;margin:8px 0;border:1px solid #cce">
+<small style="font-weight:700">Digite seu telefone para ver sua carteira</small>
+<div style="display:flex;gap:6px;margin-top:6px"><input id="loginMotoristaTel" class="input" placeholder="Seu WhatsApp" style="flex:1;margin:0"><button class="btn btn-green" style="width:auto;margin:0" onclick="loginMotorista()">Entrar</button></div>
+</div>
+<div id="painelMotorista" style="display:none">
+<div class="pix-box">
+<b>💰 Sua Carteira - Semana Atual</b>
+<div id="carteiraMotorista" style="margin-top:8px"></div>
+</div>
+<div id="mimosMotorista" style="margin-top:10px"></div>
+<button class="btn btn-whats" onclick="sacarPix()">💸 Sacar via PIX</button>
+<button class="btn btn-gray" onclick="marcarMimosRetirados()">✅ Marcar mimos como retirados</button>
+</div>
+<div style="margin-top:14px;border-top:1.5px dashed #ccc;padding-top:10px">
+<b>📝 Cadastro Novo Motorista - Uber / 99</b>
+<input id="pNome" class="input" placeholder="Nome completo">
+<input id="pTel" class="input" placeholder="WhatsApp com DDD">
+<input id="pTipo" class="input" placeholder="Uber, 99 ou os dois">
+<input id="pPix" class="input" placeholder="Chave PIX para receber">
+<span class="small-label">💰 Sua comissão para a plataforma</span>
+<select id="comissaoMotTipo" class="input"><option value="fixo">Taxa fixa semanal</option><option value="porcentagem">Porcentagem sobre corridas</option><option value="banner">Só banner</option></select>
+<input id="comissaoMotValor" type="number" class="input" placeholder="Valor">
+<label style="font-size:12px;display:flex;gap:6px;align-items:center;margin-top:6px"><input type="checkbox" id="querBannerMot" checked> Banner no topo - R$ <input id="taxaBannerMot" type="number" value="25" style="width:60px;padding:4px;border-radius:6px;border:1px solid #ccc"> /semana</label>
+<button class="btn btn-green" onclick="salvarParceiro()">Cadastrar Motorista</button>
+</div>
+<div id="listaParceiros" style="margin-top:12px"></div>
+</div>
+</div>
+
+<div id="parceiros" class="page">
+<div class="card">
+<b>🔥 Ponto de Gás + Banners</b>
+<div id="bannersAtivosTop" style="margin-bottom:12px"></div>
+<input id="gNome" class="input" placeholder="Nome do ponto">
+<input id="gLocal" class="input" placeholder="Quadra / Local">
+<input id="gTel" class="input" placeholder="Telefone">
+<input id="gPreco" type="number" class="input" placeholder="Preço do gás R$">
+<span class="small-label">💰 Comissão e banner</span>
+<select id="comissaoGasTipo" class="input"><option value="fixo">Taxa fixa semanal</option><option value="porcentagem">% sobre venda</option><option value="banner">Só banner</option></select>
+<input id="comissaoGasValor" type="number" class="input" placeholder="Valor comissão">
+<label style="font-size:12px;display:flex;gap:6px;align-items:center;margin-top:6px"><input type="checkbox" id="querBannerGas" checked> Banner no topo - R$ <input id="taxaBannerGas" type="number" value="30" style="width:60px;padding:4px;border-radius:6px;border:1px solid #ccc"> /semana</label>
+<button class="btn btn-green" onclick="salvarGas()">Cadastrar Gás</button>
+<div id="listaGas" style="margin-top:12px"></div>
+</div>
+</div>
+
+<div id="admin" class="page">
+<div class="card">
+<b>🔒 Painel Admin - Senha: 616admin</b>
+<input id="senhaAdmin" type="password" class="input" placeholder="Digite a senha">
+<button class="btn btn-green" onclick="loginAdmin()">Entrar no painel financeiro</button>
+<div id="painelConteudo" style="display:none;margin-top:14px">
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+<div style="background:#e8f5e9;padding:10px;border-radius:12px;text-align:center;border:1px solid #0a7e07"><b id="adminCaixaTotal">R$0</b><br><small>Total Caixa</small></div>
+<div style="background:#fff3cd;padding:10px;border-radius:12px;text-align:center;border:1px solid #d4a017"><b id="adminPlataforma30">R$0</b><br><small>30% Plataforma</small></div>
+<div style="background:#e3f2fd;padding:10px;border-radius:12px;text-align:center;border:1px solid #0a7e07"><b id="adminMotoristas70">R$0</b><br><small>70% Motoristas</small></div>
+</div>
+<div class="rateio-box">
+<b>📊 Rateio Blindado - Só Admin vê</b><br>
+<small style="font-size:11px">Fórmula: (Total = 10% vendas + Taxas banner + Comissões) • 30% lucro plataforma • 70% dividido igual<br>
+<span id="formulaCalculo" style="font-weight:700;color:#0a7e07"></span></small>
+</div>
+<canvas id="graficoFinanceiro" width="340" height="180" style="background:white;border-radius:12px;margin:10px 0;border:1px solid #ddd"></canvas>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px">
+<div style="background:#f5f5f5;padding:8px;border-radius:10px;text-align:center"><b id="adminUsers">0</b><br><small>Usuários</small></div>
+<div style="background:#f5f5f5;padding:8px;border-radius:10px;text-align:center"><b id="adminFurados">0/100</b><br><small>Furos</small></div>
+<div style="background:#f5f5f5;padding:8px;border-radius:10px;text-align:center"><b id="adminPedidos">0</b><br><small>Pedidos</small></div>
+</div>
+<div style="margin-top:12px">
+<button class="btn btn-gold" onclick="pagarTodosMotoristas()">💸 PAGAR TODOS MOTORISTAS VIA PIX - Rateio 70%</button>
+<button class="btn btn-green" onclick="gerarRelatorio()">📄 Gerar Relatório Financeiro</button>
+</div>
+<div id="adminListaRateio" style="margin-top:12px"></div>
+<div id="adminListaBanners" style="margin-top:12px"></div>
+<div id="adminListaUsuarios" style="margin-top:12px"></div>
+<div id="adminListaFurados" style="margin-top:12px"></div>
+<button class="btn btn-gray" onclick="limparTudo()">⚠️ Zerar tudo (teste)</button>
+</div>
+</div>
+</div>
+
+<div class="modal" id="modalWin"><div class="win-box"><h2>🎉 Resultado do Furo</h2><h3 id="premioNome" style="margin:14px 0"></h3><div id="premioComo" style="background:#e8f5e9;padding:14px;border-radius:14px;font-size:13px;margin:10px 0"></div><div style="font-size:12px">Patrocinado por <b id="premioLoja"></b><br>Código: <b id="codigoResgate"></b></div><button class="btn btn-green" onclick="fecharWin()">Fechar</button></div></div>
+
+<script>
+let state = JSON.parse(localStorage.getItem('busao616_v23') || '{"usuarioLogado":null,"itens":[],"premios":[],"parceiros":[],"gas":[],"chat":[],"pedidos":[],"furados":{},"carrinho":{},"caixa":{"total":0,"entradas":[],"pagamentos":[]},"banners":[],"mimosRetirados":{}}');
+function salvar(){ localStorage.setItem('busao616_v23', JSON.stringify(state)); if(state.usuarioLogado) localStorage.setItem('usuarioLogado', JSON.stringify(state.usuarioLogado)); }
+window.showPage = (id,el)=>{
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  if(id==='fura') iniciarFura();
+  if(id==='chat') renderChat();
+  if(id==='cliente') renderCliente();
+  if(id==='fornecedor'){ renderItens(); renderPremios(); renderBanners(); }
+  if(id==='motorista'){ renderParceiros(); renderBanners(); }
+  if(id==='parceiros'){ renderGas(); renderBanners(); }
+}
+function hojeStr(){ return new Date().toISOString().slice(0,10); }
+function agoraStr(){ return new Date().toLocaleTimeString(); }
+
+window.cadastrarUsuario = ()=>{
+  const nome=document.getElementById('uNome').value.trim();
+  const tel=document.getElementById('uTelefone').value.trim().replace(/\D/g,'');
+  const qd=document.getElementById('uQd').value.trim();
+  if(!nome || tel.length<10){ alert('Preencha nome e telefone'); return; }
+  const codigo='616'+Math.floor(Math.random()*900000);
+  const jaExistia = state.usuarioLogado && state.usuarioLogado.telefone===tel;
+  state.usuarioLogado={nome,telefone:tel,qd,codigo,ultimoFuro:state.usuarioLogado?.ultimoFuro||'',criado:new Date().toLocaleString()};
+  salvar(); atualizarUsuarioInfo();
+  if(!jaExistia){ state.chat.push({tipo:'system', nome:'Sistema', texto:`${nome.split(' ')[0]} entrou no Busão da Gente - ${qd}`, horaStr:agoraStr()}); salvar(); }
+  alert('Bem-vindo ao Busão 616!');
+  showPage('chat', document.querySelectorAll('.tab')[2]); renderChat();
+}
+function atualizarUsuarioInfo(){
+  const log=document.getElementById('userLogado');
+  const info=document.getElementById('usuarioInfo');
+  if(!state.usuarioLogado){ log.innerText='Visitante'; if(info) info.innerHTML=''; return; }
+  log.innerText=state.usuarioLogado.nome.split(' ')[0];
+  if(info) info.innerHTML=`<div style="background:#e8f5e9;padding:12px;border-radius:12px;border:1px solid #c8e6c9"><b>✅ ${state.usuarioLogado.nome}</b><br><small>${state.usuarioLogado.telefone} • ${state.usuarioLogado.qd} • Código ${state.usuarioLogado.codigo}</small><br><small>Último furo: ${state.usuarioLogado.ultimoFuro||'nunca'}</small></div>`;
+  document.getElementById('linkConvite').value=`https://newcinechat-bot.github.io/busao616/?ref=${state.usuarioLogado.codigo}`;
+}
+window.gerarConvite = ()=>{ if(state.usuarioLogado) document.getElementById('linkConvite').value=`https://newcinechat-bot.github.io/busao616/?ref=${state.usuarioLogado.codigo}`; else alert('Cadastre-se primeiro'); }
+window.copiarConvite = ()=>{ const v=document.getElementById('linkConvite').value; if(!v){ alert('Gere o link'); return; } navigator.clipboard.writeText(v).then(()=>alert('Copiado: '+v)); }
+
+function iniciarFura(){
+  const furados=Object.values(state.furados[hojeStr()]||{});
+  renderFura(furados);
+}
+function renderFura(furados){
+  const grid=document.getElementById('furaGrid'); if(!grid) return; grid.innerHTML='';
+  const hoje=hojeStr();
+  const jaFurou = state.usuarioLogado && state.usuarioLogado.ultimoFuro===hoje;
+  const restantes=100-furados.length;
+  const el=document.getElementById('statusFura');
+  if(!state.usuarioLogado){ el.innerHTML=`Cadastre-se para jogar - ${furados.length}/100 - Faltam ${restantes}`; }
+  else { el.innerHTML = jaFurou ? `Você já furou hoje! ${furados.length}/100 - Faltam ${restantes}` : `${state.usuarioLogado.nome.split(' ')[0]}, escolha 1 furo - ${furados.length}/100 - Faltam ${restantes}`; }
+  document.getElementById('adminFurados').innerText=furados.length+'/100';
+  document.getElementById('ganhadoresFura').innerHTML = furados.length ? furados.map(f=>`<div style="font-size:12px;padding:6px 0;border-bottom:1px solid #eee"><b>${f.horaStr}</b> - ${f.nome} furou ${f.id+1} ${f.premio? '🎉 '+f.premio.premio : '○ vazio'}</div>`).join('') : '<div class="empty">Nenhum furo hoje ainda.</div>';
+  for(let i=0;i<100;i++){
+    const fInfo=furados.find(f=>f.id===i);
+    const d=document.createElement('div');
+    d.className='furo' + (fInfo ? (fInfo.premio ? ' furado premio' : ' furado') : '');
+    d.textContent=fInfo ? (fInfo.premio?'🎉':'○') : '•';
+    d.onclick=()=> fInfo ? alert(`Furo ${i+1} já foi furado por ${fInfo.nome}`) : furar(i,furados);
+    grid.appendChild(d);
+  }
+}
+window.furar = (i,furadosAtuais)=>{
+  if(!state.usuarioLogado){ alert('Cadastre-se em Usuário primeiro'); showPage('usuario',document.querySelectorAll('.tab')[0]); return; }
+  const hoje=hojeStr();
+  if(state.usuarioLogado.ultimoFuro===hoje){ alert('Você já furou hoje!'); return; }
+  if(furadosAtuais.find(f=>f.id===i)){ alert('Já foi furado!'); return; }
+  let premio=null;
+  if(state.premios.length && Math.random()<0.45){ premio=state.premios[Math.floor(Math.random()*state.premios.length)]; }
+  const dado={ id:i, nome:state.usuarioLogado.nome, telefone:state.usuarioLogado.telefone, horaStr:agoraStr(), premio:premio||null };
+  if(!state.furados[hoje]) state.furados[hoje]={};
+  state.furados[hoje][i]=dado;
+  state.usuarioLogado.ultimoFuro=hoje;
+  salvar(); atualizarUsuarioInfo();
+  if(premio){
+    document.getElementById('premioNome').innerText=`🎉 ${premio.tipo}: ${premio.premio}`;
+    document.getElementById('premioComo').innerHTML=`<b>Como resgatar:</b><br>${premio.como}<br><b>Valor:</b> R$${Number(premio.valor).toFixed(2)}<br><b>Loja:</b> ${premio.loja} - ${premio.local}`;
+    document.getElementById('premioLoja').innerText=premio.loja;
+    document.getElementById('codigoResgate').innerText='FURA-'+Math.floor(Math.random()*90000+10000);
+  } else {
+    document.getElementById('premioNome').innerText='Não foi dessa vez';
+    document.getElementById('premioComo').innerHTML=`Você furou o buraco ${i+1} e estava vazio. Amanhã zera meia-noite.`;
+    document.getElementById('premioLoja').innerText='Busão 616';
+    document.getElementById('codigoResgate').innerText='TENTE-AMANHA';
+  }
+  document.getElementById('modalWin').classList.add('active');
+  renderFura(Object.values(state.furados[hoje]||{}));
+}
+window.fecharWin=()=>document.getElementById('modalWin').classList.remove('active');
+
+const emojis=["😀","😂","😍","🥰","😎","🤩","😭","😡","👍","👎","❤️","🔥","🙏","👏","😅","🥳","🤔","😴","🤣","🥺","😳","🤯","💪","🚌","🎯","🧁","☕","🍔","🙌","😃","😇","🥲","😋","🤤","🤗","😊","🥹","😆","😁","😄","😃","🙂","🤝","👊","✌️","👌","💚","💛","💙","🙋","🙋‍♂️","🙋‍♀️","🚍","🚏","🏪","💸","🎉","✨","⚡","❗","💬","👀","📢","🔔","📍"];
+function renderChat(){
+  const div=document.getElementById('chatMensagens');
+  if(!div) return;
+  div.innerHTML=state.chat.map(m=>{
+    if(m.tipo==='system'){
+      return `<div style="display:flex;justify-content:center;margin:10px 0"><div class="chat-bubble system">${m.texto}<div style="font-size:8px;color:#999">${m.horaStr}</div></div></div>`;
+    }
+    const inicial=m.nome.charAt(0).toUpperCase();
+    const cor = `hsl(${(inicial.charCodeAt(0)*37)%360}, 60%, 35%)`;
+    return `<div class="chat-msg"><div class="chat-avatar" style="background:${cor}">${inicial}</div><div class="chat-bubble"><b style="color:${cor};font-size:12px">${m.nome}</b><br>${m.texto}<div class="chat-time">${m.horaStr} ✓✓</div></div></div>`;
+  }).join('') || '<div class="empty">Nenhuma mensagem ainda. Cadastre-se!</div>';
+  div.scrollTop=div.scrollHeight;
+  const panel=document.getElementById('emojiPanel');
+  if(panel) panel.innerHTML=emojis.map(e=>`<div style="cursor:pointer;font-size:22px;text-align:center;padding:4px" onclick="addEmoji('${e}')">${e}</div>`).join('');
+  const onlineEl=document.getElementById('chatOnline');
+  if(onlineEl) onlineEl.innerText=`${state.parceiros.length + 1} online`;
+}
+window.abrirClip=()=>{ const m=document.getElementById('menuClip'); m.style.display = m.style.display==='block' ? 'none' : 'block'; }
+window.escolherTipo=(tipo)=>{
+  const inp=document.getElementById('inputClip');
+  document.getElementById('menuClip').style.display='none';
+  if(tipo==='doc') inp.accept='.pdf,.doc,.docx,.xls,.xlsx,.txt';
+  if(tipo==='midia') inp.accept='image/*,video/*';
+  if(tipo==='camera') inp.accept='image/*'; 
+  if(tipo==='camera') inp.capture='environment';
+  inp.click();
+}
+window.enviarArquivo=(input)=>{
+  if(!state.usuarioLogado){ alert('Cadastre-se'); return; }
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    let htmlMsg='';
+    if(file.type.startsWith('image/')) htmlMsg=`<img src="${e.target.result}" style="max-width:200px;border-radius:10px"><br><small>${file.name}</small>`;
+    else if(file.type.startsWith('video/')) htmlMsg=`<video src="${e.target.result}" controls style="max-width:200px;border-radius:10px"></video><br><small>${file.name}</small>`;
+    else htmlMsg=`📄 <b>Documento:</b> ${file.name} (${(file.size/1024).toFixed(1)}KB)<br><a href="${e.target.result}" download="${file.name}" style="color:#0a7e07;font-weight:800">Baixar arquivo</a>`;
+    state.chat.push({nome:state.usuarioLogado.nome.split(' ')[0], texto:htmlMsg, horaStr:agoraStr()});
+    if(state.chat.length>300) state.chat.shift();
+    salvar(); renderChat();
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+window.toggleEmoji=()=>document.getElementById('emojiPanel').classList.toggle('active');
+window.addEmoji=(e)=>{ const inp=document.getElementById('chatInput'); inp.value+=e; inp.focus(); }
+window.enviarChat=()=>{
+  const input=document.getElementById('chatInput');
+  const texto=input.value.trim();
+  if(!texto) return;
+  if(!state.usuarioLogado){ alert('Cadastre-se para falar'); showPage('usuario',document.querySelectorAll('.tab')[0]); return; }
+  state.chat.push({nome:state.usuarioLogado.nome.split(' ')[0], texto, horaStr:agoraStr()});
+  if(state.chat.length>300) state.chat.shift();
+  salvar(); renderChat(); input.value='';
+}
+
+function renderCliente(){
+  const div=document.getElementById('listaCliente'); if(!div) return;
+  if(state.itens.length===0){ div.innerHTML='<div class="empty">Nenhum produto na vitrine ainda.</div>'; atualizarTotal(); return; }
+  div.innerHTML=state.itens.map((it,i)=>{
+    const qtd=state.carrinho[i]||0;
+    const precoCom10=(it.valor*1.1).toFixed(2);
+    const emoji = it.nome.toLowerCase().includes('café')||it.nome.toLowerCase().includes('cafe') ? '☕' : it.nome.toLowerCase().includes('pão') ? '🥖' : '🧁';
+    return `<div class="vitrine-card">
+      <div class="vitrine-img">${emoji}</div>
+      <div style="flex:1"><b style="font-size:13px">${it.nome}</b><br><small style="color:#666">${it.loja}</small><br><small style="color:#0a7e07;font-weight:800">R$${it.valor.toFixed(2)}</small></div>
+      <div class="qty-box">
+        <button class="qty-btn" onclick="alterarQtd(${i},-1)">-</button>
+        <span class="qty-num">${qtd}</span>
+        <button class="qty-btn" onclick="alterarQtd(${i},1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+  atualizarTotal();
+}
+window.alterarQtd=(i,delta)=>{
+  let atual=state.carrinho[i]||0;
+  atual+=delta;
+  if(atual<0) atual=0;
+  if(atual>20) atual=20;
+  state.carrinho[i]=atual;
+  if(atual===0) delete state.carrinho[i];
+  salvar(); renderCliente();
+}
+window.atualizarTotal=()=>{
+  let total=0; let qtdTotal=0;
+  Object.entries(state.carrinho).forEach(([idx,qtd])=>{
+    const it=state.itens[idx];
+    if(it){ total+=it.valor*1.1*qtd; qtdTotal+=qtd; }
+  });
+  document.getElementById('qtdItens').innerText=qtdTotal;
+  document.getElementById('totalClienteView').innerText='R$ '+total.toFixed(2).replace('.',',');
+}
+window.finalizarPedido=()=>{
+  const totalTxt=document.getElementById('totalClienteView').innerText;
+  if(totalTxt==='R$ 0,00' || totalTxt==='R$ 0,0' || totalTxt==='R$ 0'){ alert('Escolha quantidade com +'); return; }
+  if(!state.usuarioLogado){ alert('Cadastre-se para fazer pedido'); return; }
+  let taxa=0;
+  Object.entries(state.carrinho).forEach(([idx,qtd])=>{ const it=state.itens[idx]; if(it) taxa+=it.valor*0.1*qtd; });
+  const valorTotal=Object.entries(state.carrinho).reduce((acc,[idx,qtd])=>{ const it=state.itens[idx]; return acc + (it? it.valor*1.1*qtd : 0); },0);
+  state.caixa.total+=taxa;
+  state.caixa.entradas.push({tipo:'Venda vitrine', valor:taxa, total:valorTotal, cliente:state.usuarioLogado.nome, data:new Date().toLocaleString()});
+  state.pedidos.push({total:valorTotal, taxa, data:new Date().toLocaleString(), cliente:state.usuarioLogado.nome});
+  salvar();
+  alert(`Pedido confirmado! ${totalTxt} - Forma: ${document.getElementById('formaPag').value}`);
+  document.getElementById('historicoPedidos').innerHTML=`<div style="background:#e8f5e9;padding:10px;border-radius:10px;margin-top:8px;border:1px solid #c8e6c9"><b>Último:</b> ${totalTxt}<br><small>${new Date().toLocaleString()} - ${state.usuarioLogado.nome}</small></div>`;
+  state.carrinho={}; salvar(); renderCliente();
+}
+window.cancelarPedido=()=>{ state.carrinho={}; salvar(); renderCliente(); }
+
+window.salvarVendedor=()=>{
+  const nome=document.getElementById('vNome').value.trim();
+  const loja=document.getElementById('vLoja').value.trim();
+  const local=document.getElementById('vLocal').value.trim();
+  const tipo=document.getElementById('tipoPremio').value;
+  const premio=document.getElementById('nomePremio').value.trim();
+  const como=document.getElementById('comoResgatar').value.trim();
+  const valor=parseFloat(document.getElementById('valorPremio').value);
+  const comTipo=document.getElementById('comissaoFornTipo').value;
+  const comValor=parseFloat(document.getElementById('comissaoFornValor').value)||0;
+  const querBanner=document.getElementById('querBannerForn').checked;
+  const taxaBanner=parseFloat(document.getElementById('taxaBannerForn').value)||0;
+  if(!nome||!loja||!local||!premio||!como||isNaN(valor)){ alert('Preencha prêmio'); return; }
+  state.premios.push({nome,loja,local,tipo,premio,como,valor,comTipo,comValor,querBanner,taxaBanner,criado:new Date().toLocaleString()});
+  let entrada=0;
+  if(querBanner) entrada+=taxaBanner;
+  if(comTipo==='fixo') entrada+=comValor;
+  if(entrada>0){ state.caixa.total+=entrada; state.caixa.entradas.push({tipo:`Fornecedor ${loja}`, valor:entrada, data:new Date().toLocaleString()}); }
+  if(querBanner){ state.banners.push({tipo:'fornecedor', nome:loja, local, valor:taxaBanner, data:new Date().toLocaleString()}); }
+  salvar(); alert(`Prêmio cadastrado!`); renderPremios(); renderBanners();
+}
+function renderPremios(){
+  const div=document.getElementById('listaPremios'); if(!div) return;
+  div.innerHTML=state.premios.map(p=>`<div style="background:#e8f5e9;padding:10px;border-radius:10px;margin:6px 0;border:1px solid #c8e6c9"><b>${p.loja}</b> - ${p.tipo}: ${p.premio}<br><small>R$${p.valor} • ${p.como} • ${p.local}</small></div>`).join('');
+}
+window.addItem=()=>{
+  const nome=document.getElementById('nomeItem').value.trim();
+  const valor=parseFloat(document.getElementById('valorItem').value);
+  if(!nome||isNaN(valor)){ alert('Produto e valor'); return; }
+  state.itens.push({nome,valor,loja:document.getElementById('vLoja').value.trim()||'Loja da Parada'});
+  salvar(); document.getElementById('nomeItem').value=''; document.getElementById('valorItem').value=''; renderItens(); renderCliente();
+}
+function renderItens(){
+  const div=document.getElementById('listaItens'); if(!div) return;
+  div.innerHTML=state.itens.map((it,i)=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid #eee"><span>📱 ${it.nome} - R$${it.valor.toFixed(2)}</span><span style="color:red;cursor:pointer;font-weight:900" onclick="removerItem(${i})">X</span></div>`).join('');
+}
+window.removerItem=(i)=>{ state.itens.splice(i,1); if(state.carrinho[i]) delete state.carrinho[i]; salvar(); renderItens(); renderCliente(); }
+
+window.salvarParceiro=()=>{
+  const nome=document.getElementById('pNome').value.trim();
+  const tel=document.getElementById('pTel').value.trim().replace(/\D/g,'');
+  const tipo=document.getElementById('pTipo').value.trim();
+  const pix=document.getElementById('pPix').value.trim();
+  const comTipo=document.getElementById('comissaoMotTipo').value;
+  const comValor=parseFloat(document.getElementById('comissaoMotValor').value)||0;
+  const querBanner=document.getElementById('querBannerMot').checked;
+  const taxaBanner=parseFloat(document.getElementById('taxaBannerMot').value)||0;
+  if(!nome||!tel){ alert('Nome e telefone'); return; }
+  state.parceiros.push({nome,telefone:tel,tipo,pix,comTipo,comValor,querBanner,taxaBanner,ativo:true,totalReceber:0,criado:new Date().toLocaleString()});
+  let entrada=0;
+  if(querBanner) entrada+=taxaBanner;
+  if(comTipo==='fixo') entrada+=comValor;
+  if(entrada>0){ state.caixa.total+=entrada; state.caixa.entradas.push({tipo:`Motorista ${nome}`, valor:entrada, data:new Date().toLocaleString()}); }
+  if(querBanner){ state.banners.push({tipo:'motorista', nome:nome+' - '+tipo, local:tel, valor:taxaBanner, data:new Date().toLocaleString()}); }
+  salvar(); alert(`Motorista ${nome} cadastrado!`); renderParceiros(); renderBanners();
+}
+function renderParceiros(){
+  const div=document.getElementById('listaParceiros'); if(!div) return;
+  if(state.parceiros.length===0){ div.innerHTML='<div class="empty">Nenhum motorista cadastrado ainda.</div>'; return; }
+  div.innerHTML=state.parceiros.map((p,i)=>`<div style="font-size:12px;padding:10px 0;border-bottom:1px solid #eee"><div style="display:flex;justify-content:space-between"><span><b>🚕 ${p.nome}</b> - ${p.tipo} - ${p.telefone}</span><a href="https://wa.me/55${p.telefone.replace(/\D/g,'')}" target="_blank" style="background:#25d366;color:white;padding:6px 12px;border-radius:20px;text-decoration:none;font-weight:800;font-size:11px">Zap</a></div></div>`).join('');
+}
+window.loginMotorista=()=>{
+  const tel=document.getElementById('loginMotoristaTel').value.trim().replace(/\D/g,'');
+  if(!tel){ alert('Digite seu telefone'); return; }
+  const mot=state.parceiros.find(m=>m.telefone.replace(/\D/g,'')===tel);
+  if(!mot){ alert('Motorista não encontrado.'); return; }
+  document.getElementById('painelMotorista').style.display='block';
+  const totalCaixa=state.caixa.total;
+  const valor70=totalCaixa*0.7;
+  const porMotorista = state.parceiros.length ? valor70 / state.parceiros.length : 0;
+  document.getElementById('carteiraMotorista').innerHTML=`<div style="font-size:14px"><b>${mot.nome}</b><br>PIX: ${mot.pix||'não cadastrado'}<br><br><div style="background:white;padding:10px;border-radius:10px;border:1px solid #25d366"><b>💰 Você tem R$${porMotorista.toFixed(2)} para receber essa semana</b><br><small>Status: ${mot.pago? '✅ Pago via PIX' : '⏳ Aguardando pagamento'}</small></div></div>`;
+  document.getElementById('mimosMotorista').innerHTML=`<b>🎁 Mimos para retirar</b><br>${state.premios.map(pr=>`<div style="background:#fff9c4;padding:8px;border-radius:8px;margin:6px 0;border:1px solid #d4a017;font-size:12px"><b>${pr.loja}</b> - ${pr.premio}<br><small>Retirar em: ${pr.local} • Como: ${pr.como}</small><br><small>${state.mimosRetirados[mot.telefone]?.includes(pr.loja)? '✅ Já retirado' : '⏳ Disponível'}</small></div>`).join('') || '<div class="empty">Nenhum mimo ainda.</div>'}`;
+}
+window.sacarPix=()=>{
+  const tel=document.getElementById('loginMotoristaTel').value.trim().replace(/\D/g,'');
+  const mot=state.parceiros.find(m=>m.telefone.replace(/\D/g,'')===tel);
+  if(!mot){ alert('Faça login'); return; }
+  const porMotorista = state.parceiros.length ? (state.caixa.total*0.7)/state.parceiros.length : 0;
+  alert(`PIX de R$${porMotorista.toFixed(2)} enviado para ${mot.pix||mot.telefone}`);
+  mot.pago=true; salvar(); renderParceiros();
+}
+window.marcarMimosRetirados=()=>{
+  const tel=document.getElementById('loginMotoristaTel').value.trim().replace(/\D/g,'');
+  if(!tel){ alert('Login'); return; }
+  if(!state.mimosRetirados[tel]) state.mimosRetirados[tel]=[];
+  state.premios.forEach(p=>{ if(!state.mimosRetirados[tel].includes(p.loja)) state.mimosRetirados[tel].push(p.loja); });
+  salvar(); alert('Mimos marcados como retirados!'); loginMotorista();
+}
+
+window.salvarGas=()=>{
+  const nome=document.getElementById('gNome').value.trim();
+  const local=document.getElementById('gLocal').value.trim();
+  const tel=document.getElementById('gTel').value.trim();
+  const preco=parseFloat(document.getElementById('gPreco').value)||0;
+  const comTipo=document.getElementById('comissaoGasTipo').value;
+  const comValor=parseFloat(document.getElementById('comissaoGasValor').value)||0;
+  const querBanner=document.getElementById('querBannerGas').checked;
+  const taxaBanner=parseFloat(document.getElementById('taxaBannerGas').value)||0;
+  if(!nome||!local||!tel){ alert('Preencha nome, local e telefone'); return; }
+  state.gas.push({nome,local,telefone:tel,preco,comTipo,comValor,querBanner,taxaBanner,criado:new Date().toLocaleString()});
+  let entrada=0;
+  if(querBanner) entrada+=taxaBanner;
+  if(comTipo==='fixo') entrada+=comValor;
+  if(entrada>0){ state.caixa.total+=entrada; state.caixa.entradas.push({tipo:`Gás ${nome}`, valor:entrada, data:new Date().toLocaleString()}); }
+  if(querBanner){ state.banners.push({tipo:'gás', nome, local, valor:taxaBanner, data:new Date().toLocaleString()}); }
+  salvar(); alert(`Gás ${nome} cadastrado!`); renderGas(); renderBanners();
+}
+function renderGas(){
+  const div=document.getElementById('listaGas'); if(!div) return;
+  div.innerHTML=state.gas.map(g=>`<div style="font-size:12px;padding:8px 0;border-bottom:1px solid #eee"><b>🔥 ${g.nome}</b> - ${g.local} - R$${g.preco} - ${g.telefone}</div>`).join('') || '<div class="empty">Nenhum ponto de gás cadastrado.</div>';
+}
+function renderBanners(){
+  const divs=[document.getElementById('bannersAtivosTop'), document.getElementById('adminListaBanners')];
+  const html = state.banners.length ? state.banners.map(b=>`<div class="banner-item"><b>🌟 ${b.nome}</b> - ${b.tipo} - ${b.local}<br><small>R$${b.valor}/semana - ${b.data}</small></div>`).join('') : '<div class="empty">Nenhum banner pago ainda.</div>';
+  divs.forEach(d=>{ if(d) d.innerHTML=html; });
+  const topDiv=document.getElementById('bannersAtivosTop'); if(topDiv && state.banners.length){ topDiv.innerHTML=`<div style="background:#0a7e07;color:white;padding:8px;border-radius:10px;margin-bottom:10px;font-weight:800;font-size:11px">🌟 PATROCINADORES</div>` + html; }
+}
+
+window.loginAdmin=()=>{
+  const s=document.getElementById('senhaAdmin').value;
+  if(s!=='616admin'){ alert('Senha incorreta'); return; }
+  document.getElementById('painelConteudo').style.display='block';
+  atualizarAdmin();
+}
+function atualizarAdmin(){
+  const total=state.caixa.total||0;
+  const partePlataforma=total*0.3;
+  const parteMotoristas=total*0.7;
+  const porMotorista = state.parceiros.length ? parteMotoristas / state.parceiros.length : 0;
+  document.getElementById('adminCaixaTotal').innerText='R$'+total.toFixed(2);
+  document.getElementById('adminPlataforma30').innerText='R$'+partePlataforma.toFixed(2);
+  document.getElementById('adminMotoristas70').innerText='R$'+parteMotoristas.toFixed(2);
+  document.getElementById('adminUsers').innerText=state.chat.filter(c=>c.tipo==='system').length || 1;
+  document.getElementById('adminPedidos').innerText=state.pedidos.length;
+  document.getElementById('formulaCalculo').innerText=`Total R$${total.toFixed(2)} = (R$${partePlataforma.toFixed(2)} plataforma 30%) + (R$${parteMotoristas.toFixed(2)} rateio 70% ÷ ${state.parceiros.length} motoristas = R$${porMotorista.toFixed(2)} cada)`;
+  const rateioDiv=document.getElementById('adminListaRateio');
+  if(rateioDiv){
+    rateioDiv.innerHTML=`<div class="rateio-box"><b>📋 Rateio por motorista</b><br>${state.parceiros.map((m,i)=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid #c8e6c9"><span>${i+1}. ${m.nome} - ${m.telefone} - PIX ${m.pix||' - '}</span><span><b>R$${porMotorista.toFixed(2)}</b> ${m.pago? '✅ Pago' : '⏳ A pagar'}</span></div>`).join('') || '<div class="empty">Nenhum motorista</div>'}</div>`;
+  }
+  const entradasHtml = state.caixa.entradas.slice(-20).reverse().map(e=>`<div style="font-size:11px;padding:4px 0;border-bottom:1px solid #eee"><b>${e.tipo}</b> - R$${e.valor.toFixed(2)} - ${e.data}</div>`).join('') || '<div class="empty">Nenhuma entrada ainda</div>';
+  const usuariosDiv=document.getElementById('adminListaUsuarios');
+  if(usuariosDiv) usuariosDiv.innerHTML=`<div style="margin-top:10px"><b>📥 Entradas no caixa</b>${entradasHtml}</div><div style="margin-top:10px"><b>👤 Usuários</b><br>${state.usuarioLogado? `<small>${state.usuarioLogado.nome} - ${state.usuarioLogado.telefone}</small>` : 'Nenhum'}</div>`;
+  document.getElementById('adminListaFurados').innerHTML=document.getElementById('ganhadoresFura').innerHTML;
+  desenharGrafico();
+}
+function desenharGrafico(){
+  const canvas=document.getElementById('graficoFinanceiro'); if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const total=state.caixa.total||0;
+  const p30=total*0.3;
+  const p70=total*0.7;
+  ctx.fillStyle='#ddd'; ctx.fillRect(20,20,300,20);
+  ctx.fillStyle='#ff3d00'; ctx.fillRect(20,20,Math.min(300, p30*2),20);
+  ctx.fillStyle='#333'; ctx.font='11px Arial'; ctx.fillText(`Plataforma 30% R$${p30.toFixed(2)}`,22,34);
+  ctx.fillStyle='#ddd'; ctx.fillRect(20,60,300,20);
+  ctx.fillStyle='#0a7e07'; ctx.fillRect(20,60,Math.min(300, p70*2),20);
+  ctx.fillStyle='#333'; ctx.fillText(`Motoristas 70% R$${p70.toFixed(2)} ÷ ${state.parceiros.length||1}`,22,74);
+  ctx.fillStyle='#666'; ctx.font='10px Arial'; ctx.fillText(`Total Caixa R$${total.toFixed(2)}`,20,110);
+}
+window.pagarTodosMotoristas=()=>{
+  const total=state.caixa.total||0;
+  if(total===0){ alert('Caixa vazio'); return; }
+  if(state.parceiros.length===0){ alert('Nenhum motorista'); return; }
+  if(!confirm(`Pagar? Total R$${total.toFixed(2)} - 30% plataforma R$${(total*0.3).toFixed(2)} - 70% R$${(total*0.7).toFixed(2)} ÷ ${state.parceiros.length} = R$${(total*0.7/state.parceiros.length).toFixed(2)} cada`)){ return; }
+  const porMotorista=(total*0.7)/state.parceiros.length;
+  state.parceiros.forEach(m=>{ m.totalReceber=(m.totalReceber||0)+porMotorista; m.pago=true; m.dataPago=new Date().toLocaleString(); });
+  state.caixa.pagamentos.push({tipo:'Rateio pago', valor:total*0.7, porMotorista, qtd:state.parceiros.length, data:new Date().toLocaleString()});
+  state.caixa.total=0;
+  salvar(); atualizarAdmin(); renderParceiros();
+  alert(`Pagamento realizado! R$${porMotorista.toFixed(2)} para cada motorista.`);
+}
+window.gerarRelatorio=()=>{
+  const total=state.caixa.total;
+  const rel=`RELATÓRIO FINANCEIRO BUSÃO 616 - ${new Date().toLocaleString()}
+Total em Caixa: R$${total.toFixed(2)}
+30% Plataforma: R$${(total*0.3).toFixed(2)}
+70% Motoristas: R$${(total*0.7).toFixed(2)}
+Nº Motoristas: ${state.parceiros.length}
+Valor por motorista: R$${(state.parceiros.length? (total*0.7)/state.parceiros.length : 0).toFixed(2)}
+`;
+  alert(rel);
+}
+window.limparTudo=()=>{ if(confirm('Zerar tudo local?')){ localStorage.removeItem('busao616_v23'); location.reload(); } }
+
+atualizarUsuarioInfo(); renderChat(); renderCliente(); renderItens(); renderPremios(); renderParceiros(); renderGas(); renderBanners(); iniciarFura();
+setInterval(()=>{ const el=document.getElementById('clock'); if(el) el.innerText=new Date().toLocaleTimeString(); const fim=new Date(); fim.setHours(23,59,59,999); const diff=fim-new Date(); const h=Math.floor(diff/3600000); const m=Math.floor((diff%3600000)/60000); const s=Math.floor((diff%60000)/1000); const el2=document.getElementById('countTimerFura'); if(el2) el2.innerText=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; },1000);
+if(state.usuarioLogado){ document.getElementById('uNome').value=state.usuarioLogado.nome; document.getElementById('uTelefone').value=state.usuarioLogado.telefone; document.getElementById('uQd').value=state.usuarioLogado.qd; }
+</script>
+</body>
+</html>

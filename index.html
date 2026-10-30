@@ -627,7 +627,8 @@ Valor por motorista: R$${(state.parceiros.length? (total*0.7)/state.parceiros.le
 window.limparTudo=()=>{ if(confirm('Zerar tudo local?')){ localStorage.removeItem('busao616_v23'); location.reload(); } }
 
 atualizarUsuarioInfo(); renderChat(); renderCliente(); renderItens(); renderPremios(); renderParceiros(); renderGas(); renderBanners(); iniciarFura();
-setInterval(()=>{ const el=document.getElementById('clock'); if(el) el.innerText=new Date().toLocaleTimeString(); const fim=new Date(); fim.setHours(23,59,59,999); const diff=fim-new Date(); const h=Math.floor(diff/3600000); const m=Math.floor((diff%3600000)/60000); const s=Math.floor((diff%60000)/1000); const el2=document.getElementById('countTimerFura'); if(el2) el2.innerText=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; },1000);
+setInterval(()=>{ const el=document.getElementById('clock'); if(el) el.innerText=new Date().toLocaleTimeString(); },1000);
+if(state.usuarioLogado){ document.getElementById('uNome').value=state.usuarioLogado.nome; document.getElementById('uTelefone').value=state.usuarioLogado.telefone;
 if(state.usuarioLogado){ document.getElementById('uNome').value=state.usuarioLogado.nome; document.getElementById('uTelefone').value=state.usuarioLogado.telefone; document.getElementById('uQd').value=state.usuarioLogado.qd; }
 </script>
 <!-- INICIO BLOCO v24 - PLANO UNICO R$ 29,90 - NAO APAGA NADA ANTES -->

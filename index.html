@@ -276,10 +276,9 @@ function atualizarUsuarioInfo(){
   if(!state.usuarioLogado){ log.innerText='Visitante'; if(info) info.innerHTML=''; return; }
   log.innerText=state.usuarioLogado.nome.split(' ')[0];
   if(info) info.innerHTML=`<div style="background:#e8f5e9;padding:12px;border-radius:12px;border:1px solid #c8e6c9"><b>✅ ${state.usuarioLogado.nome}</b><br><small>${state.usuarioLogado.telefone} • ${state.usuarioLogado.qd} • Código ${state.usuarioLogado.codigo}</small><br><small>Último furo: ${state.usuarioLogado.ultimoFuro||'nunca'}</small></div>`;
-  document.getElementById('linkConvite').value=`https://newcinechat-bot.github.io/busao616/?ref=${state.usuarioLogado.codigo}`;
-}
-window.gerarConvite = ()=>{ if(state.usuarioLogado) document.getElementById('linkConvite').value=`https://newcinechat-bot.github.io/busao616/?ref=${state.usuarioLogado.codigo}`; else alert('Cadastre-se primeiro'); }
-window.copiarConvite = ()=>{ const v=document.getElementById('linkConvite').value; if(!v){ alert('Gere o link'); return; } navigator.clipboard.writeText(v).then(()=>alert('Copiado: '+v)); }
+  document.getElementById('linkConvite').value='https://newcinechat-bot.github.io/busao616/';
+window.gerarConvite = ()=>{ document.getElementById('linkConvite').value='https://newcinechat-bot.github.io/busao616/'; };
+window.copiarConvite = ()=>{ const v=document.getElementById('linkConvite').value; if(!v){ alert('Gere o link'); return; } navigator.clipboard.writeText(v).then(()=>alert('Link copiado! ✅\n'+v)); }; if(!v){ alert('Gere o link'); return; } navigator.clipboard.writeText(v).then(()=>alert('Copiado: '+v)); }
 
 function iniciarFura(){
   const furados=Object.values(state.furados[hojeStr()]||{});
